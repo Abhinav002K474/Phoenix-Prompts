@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHOENIX PROMPTS | Admin Dashboard</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Phoenix Prompts Admin Dashboard. Upload, edit, and manage your AI prompts catalog.">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="protected-preview">
+
+  <div class="app-container" id="admin-app-container" style="display:none;">
+    
+    <!-- Header / Navbar -->
+    <header>
+      <div class="nav-bar">
+        <!-- Logo -->
+        <a href="index.html" class="logo-container">
+          <span class="logo-icon">&#128293;</span>
+          <span class="logo-text brand-text">Phoenix Prompts</span>
+        </a>
+        
+        <!-- Nav Menu -->
+        <nav class="nav-menu">
+          <a href="index.html" class="nav-link" id="tab-browse">Browse</a>
+          <a href="admin.html" class="nav-link active" id="tab-admin">Admin Dashboard</a>
+        </nav>
+        
+        <!-- Actions (Wishlist, Cart, Logout) -->
+        <div class="nav-actions">
+          <a href="index.html?drawer=wishlist" class="nav-action-btn" id="btn-wishlist" title="Go to Wishlist">
+            &#9829;
+            <span class="badge" id="wishlist-count">0</span>
+          </a>
+          
+          <a href="index.html?drawer=cart" class="nav-action-btn" id="btn-cart" title="Go to Cart">
+            &#128722;
+            <span class="badge" id="cart-count">0</span>
+          </a>
+          
+          <button class="nav-action-btn" id="btn-logout" title="Log Out">
+            &#128682;
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Admin Dashboard Hero Banner -->
+    <section class="admin-hero">
+      <div class="admin-hero-left">
+        <h2>&#128187; Admin Dashboard</h2>
+        <p>Manage your Phoenix Prompts catalog &mdash; upload, edit, and organize AI prompts.</p>
+      </div>
+      <div class="admin-hero-stats">
+        <div class="admin-stat-card">
+          <div class="admin-stat-value" id="stat-total">0</div>
+          <div class="admin-stat-label">Total</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-value" id="stat-public">0</div>
+          <div class="admin-stat-label">Public</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-value" id="stat-free">0</div>
+          <div class="admin-stat-label">Free</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-value" id="stat-featured">0</div>
+          <div class="admin-stat-label">Featured</div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Admin Dashboard View -->
+    <main class="admin-section" id="view-admin">
+      
+      <!-- Admin Panel Add Form -->
+      <aside class="admin-form-panel">
+        <h3 class="admin-title">
+          <span>&#128187;</span>
+          <span id="admin-form-mode-title">Upload Prompt</span>
+        </h3>
+        
+        <form class="admin-form" id="admin-form">
+          <!-- Hidden ID for edit state tracking -->
+          <input type="hidden" id="form-prompt-id">
+          
+          <div class="form-group">
+            <label for="form-title">Prompt Title</label>
+            <input type="text" id="form-title" class="form-input" placeholder="e.g. Fox Girl on Moon" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="form-prompt">AI Prompt String</label>
+            <textarea id="form-prompt" class="form-input form-textarea" rows="4" placeholder="e.g. A photorealistic fox girl... --v 6.0" required></textarea>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="form-category">Category</label>
+              <select id="form-category" class="form-input form-select" required>
+                <option value="Anime">Anime</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Fantasy">Fantasy</option>
+                <option value="Landscape">Landscape</option>
+                <option value="Cyberpunk">Cyberpunk</option>
+                <option value="Realistic">Realistic</option>
+                <option value="Portrait">Portrait</option>
+                <option value="Cinematic">Cinematic</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="form-price">Price (₹) <span class="label-hint">(0 for Free)</span></label>
+              <input type="number" id="form-price" class="form-input" min="0" value="0" required>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="form-tags">Tags <span class="label-hint">(Comma separated)</span></label>
+            <input type="text" id="form-tags" class="form-input" placeholder="e.g. Moon, Fantasy, Fox Girl">
+          </div>
+          
+          <div class="form-group">
+            <label for="form-seo-desc">SEO Description</label>
+            <textarea id="form-seo-desc" class="form-input form-textarea" rows="2" placeholder="Brief metadata description for SEO optimization."></textarea>
+          </div>
+          
+          <!-- Image Upload zone -->
+          <div class="form-group">
+            <label>Preview Image</label>
+            <div class="image-upload-zone" onclick="document.getElementById('image-upload').click();">
+              <span class="upload-icon">&#128247;</span>
+              <span class="upload-text">Upload Preview Image</span>
+              <span class="upload-subtext">Drag & drop or click to choose (PNG, JPG)</span>
+              <input type="file" id="image-upload" style="display:none;" accept="image/*">
+            </div>
+            <img class="image-preview-thumbnail" id="image-preview" src="#" alt="Upload Preview">
+          </div>
+          
+          <!-- Checkbox Switch Row -->
+          <div class="admin-switch-row">
+            <div class="form-group">
+              <label for="form-visibility">Visibility</label>
+              <select id="form-visibility" class="form-input form-select-sm">
+                <option value="public">Public</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+            
+            <div class="form-group admin-form-switch-cell">
+              <label class="admin-switch-label">
+                <span>Featured</span>
+                <input type="checkbox" id="form-featured" class="admin-switch-input">
+                <span class="switch-pill"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="admin-form-actions">
+            <button type="submit" class="btn btn-primary" id="form-submit-btn">Upload Prompt</button>
+            <button type="button" class="btn btn-secondary" id="btn-reset-form">Cancel</button>
+          </div>
+        </form>
+      </aside>
+      
+      <!-- Admin Table List -->
+      <section class="admin-list-panel">
+        <div class="feed-header">
+          <span class="results-count">Library Catalog</span>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="admin-table-body">
+              <!-- Rendered Dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+    </main>
+    
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-info">
+          <a href="index.html" class="logo-container" style="margin-bottom:0.5rem;">
+            <span class="logo-icon">&#128293;</span>
+            <span class="logo-text brand-text">Phoenix Prompts</span>
+          </a>
+          <p class="footer-desc">The ultimate premium marketplace for state-of-the-art AI art generative prompts. High-end, creator-curated prompt sets that deliver exceptional results.</p>
+        </div>
+        
+        <div>
+          <h4 class="footer-col-title">Help & Legal</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html" class="footer-link">Support & FAQs</a></li>
+            <li><a href="index.html" class="footer-link">License Agreements</a></li>
+            <li><a href="index.html" class="footer-link">Terms of Service</a></li>
+            <li><a href="index.html" class="footer-link">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <span>&copy; 2026 PHOENIX PROMPTS. All rights reserved. Made for creators.</span>
+      </div>
+    </footer>
+    
+  </div>
+
+  <!-- Admin Authentication Overlay -->
+  <div id="admin-login-overlay" class="admin-login-overlay">
+    <div class="login-card">
+      <div class="login-header">
+        <span class="logo-icon">&#128293;</span>
+        <h2 class="logo-text brand-text">PHOENIX ADMIN</h2>
+      </div>
+      <p class="login-subtitle">Enter credentials to manage the prompt store catalog.</p>
+      
+      <form id="admin-login-form" class="login-form">
+        <div class="form-group">
+          <label for="admin-password">Password</label>
+          <input type="password" id="admin-password" class="form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="login-submit-btn">Unlock Dashboard</button>
+      </form>
+      <div class="login-footer">
+        <a href="index.html" class="back-to-store">&#8592; Back to Store</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Admin Controller Link -->
+  <script src="admin.js"></script>
+</body>
+</html>

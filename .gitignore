@@ -1,0 +1,8 @@
+# IDE / Temporary files
+.gemini/
+.vscode/
+.idea/
+*.log
+Thumbs.db
+Desktop.ini
+.DS_Store

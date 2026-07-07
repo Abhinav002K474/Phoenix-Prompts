@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHOENIX PROMPTS | Premium AI Prompts for Creators</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Phoenix Prompts is a premium marketplace for creators offering high-quality AI art prompts for Midjourney, Stable Diffusion, and ChatGPT. Unlock premium prompts instantly.">
+  <meta name="keywords" content="AI Prompts, Midjourney, Stable Diffusion, ChatGPT, Art Prompts, Digital Art, Premium Prompts, Image Generator, Prompt Engineering">
+  <meta name="author" content="Phoenix Prompts">
+  
+  <!-- Google Fonts & Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- FontAwesome Icon fallback (using unicode symbols in style/content where possible) -->
+</head>
+<body class="protected-preview">
+
+  <div class="app-container">
+    
+    <!-- Header / Navbar -->
+    <header>
+      <div class="nav-bar">
+        <!-- Logo -->
+        <a href="#" class="logo-container" id="logo-link" onclick="location.reload();">
+          <span class="logo-icon">&#128293;</span>
+          <span class="logo-text brand-text">Phoenix Prompts</span>
+        </a>
+        
+        <!-- Search Header Bar -->
+        <div class="search-header-container">
+          <span class="search-icon-btn">&#128269;</span>
+          <input type="text" id="search-header" class="search-header-input" placeholder="Search Prompt...">
+        </div>
+        
+        <!-- Nav Menu -->
+        <nav class="nav-menu">
+          <a href="index.html" class="nav-link active" id="tab-browse">Browse</a>
+        </nav>
+        
+        <!-- Actions (Wishlist, Cart) -->
+        <div class="nav-actions">
+          <button class="nav-action-btn" id="btn-wishlist" onclick="openWishlistDrawer()" title="Wishlist">
+            &#9829;
+            <span class="badge" id="wishlist-count">0</span>
+          </button>
+          
+          <button class="nav-action-btn" id="btn-cart" onclick="openCartDrawer()" title="Cart">
+            &#128722;
+            <span class="badge" id="cart-count">0</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- Hero Banner (Only shown in Browse view) -->
+    <section class="hero-section" id="hero-section">
+      <div class="hero-glow-1"></div>
+      <div class="hero-glow-2"></div>
+      
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>&#10024; Level Up Your Art</span>
+        </div>
+        <h1 class="hero-title">PHOENIX PROMPTS</h1>
+        <p class="hero-subtitle">Premium AI Prompts for Creators. Unlock production-ready midjourney & stable diffusion codes instantly.</p>
+        
+        <!-- Quick category links -->
+        <div class="quick-categories" id="quick-categories-container">
+          <!-- Rendered Dynamically by JS -->
+        </div>
+      </div>
+    </section>
+    
+    <!-- MAIN CONTENT VIEW: Browse Section -->
+    <main class="shop-layout" id="view-browse">
+      
+      <!-- Left Sidebar Filters -->
+      <aside class="sidebar-filters">
+        
+        <!-- Filter: Search (duplicate for sidebar layout) -->
+        <div class="filter-section">
+          <h4 class="filter-title">Search</h4>
+          <div class="select-wrapper">
+            <input type="text" id="search-sidebar" class="search-header-input" placeholder="Keyword filter...">
+          </div>
+        </div>
+        
+        <!-- Filter: Categories -->
+        <div class="filter-section">
+          <h4 class="filter-title">Categories</h4>
+          <ul class="filter-options-list" id="categories-list">
+            <!-- Rendered Dynamically by JS -->
+          </ul>
+        </div>
+        
+        <!-- Filter: Price -->
+        <div class="filter-section">
+          <h4 class="filter-title">Price Range</h4>
+          <div class="price-filter-grid">
+            <div>
+              <input type="radio" name="price-filter" id="price-all" value="all" class="price-radio-input" checked>
+              <label for="price-all" class="price-btn-label">All</label>
+            </div>
+            <div>
+              <input type="radio" name="price-filter" id="price-free" value="free" class="price-radio-input">
+              <label for="price-free" class="price-btn-label">Free</label>
+            </div>
+            <div>
+              <input type="radio" name="price-filter" id="price-premium" value="premium" class="price-radio-input">
+              <label for="price-premium" class="price-btn-label">Premium</label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Filter: Sort -->
+        <div class="filter-section">
+          <h4 class="filter-title">Sort By</h4>
+          <div class="select-wrapper">
+            <select class="custom-select" id="sort-select" title="Sort Prompts By">
+              <option value="newest">Newest Releases</option>
+              <option value="popular">Popular (Most Rated)</option>
+              <option value="trending">Trending (High rating)</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Filter: Tags -->
+        <div class="filter-section">
+          <h4 class="filter-title">Popular Tags</h4>
+          <div class="sidebar-tag-cloud" id="tag-cloud">
+            <!-- Rendered Dynamically by JS -->
+          </div>
+        </div>
+        
+      </aside>
+      
+      <!-- Right Feed Grid Column -->
+      <section class="feed-column">
+        <div class="feed-header">
+          <span class="results-count" id="results-count">0 Prompts found</span>
+        </div>
+        
+        <!-- Grid list -->
+        <div class="prompts-grid" id="prompts-grid">
+          <!-- Cards Rendered Dynamically by JS -->
+        </div>
+      </section>
+      
+    </main>
+    
+
+    
+    <!-- Footer -->
+    <footer>
+      <div class="footer-content">
+        <div class="footer-info">
+          <a href="#" class="logo-container">
+            <span class="logo-icon">&#128293;</span>
+            <span class="logo-text brand-text">Phoenix Prompts</span>
+          </a>
+          <p class="footer-desc">The ultimate premium marketplace for state-of-the-art AI art generative prompts. High-end, creator-curated prompt sets that deliver exceptional results.</p>
+          <div class="footer-socials">
+            <a href="#" class="footer-social-link">&#120143;</a>
+            <a href="#" class="footer-social-link">&#9889;</a>
+            <a href="#" class="footer-social-link">&#128140;</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="footer-col-title">Categories</h4>
+          <ul class="footer-links-list">
+            <li><a href="#" class="footer-link">Anime Prompts</a></li>
+            <li><a href="#" class="footer-link">Gaming Assets</a></li>
+            <li><a href="#" class="footer-link">Realistic Photorealistic</a></li>
+            <li><a href="#" class="footer-link">Landscape & Matte Painting</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="footer-col-title">Help & Legal</h4>
+          <ul class="footer-links-list">
+            <li><a href="#" class="footer-link">Support & FAQs</a></li>
+            <li><a href="#" class="footer-link">License Agreements</a></li>
+            <li><a href="#" class="footer-link">Terms of Service</a></li>
+            <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="footer-col-title">Creator Center</h4>
+          <ul class="footer-links-list">
+            <li><a href="#" class="footer-link">Become a Seller</a></li>
+            <li><a href="#" class="footer-link">Prompt Standards Guide</a></li>
+            <li><a href="#" class="footer-link">Community Discord</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <span>&copy; 2026 PHOENIX PROMPTS. All rights reserved. Made for creators.</span>
+        <div class="footer-bottom-links">
+          <a href="#" class="footer-link">Sitemap</a>
+          <a href="#" class="footer-link">Cookies Settings</a>
+        </div>
+      </div>
+    </footer>
+    
+  </div>
+
+  <!-- DRAWERS LAYER: Drawer Overlay background -->
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+  
+  <!-- Sliding Drawer: Shopping Cart -->
+  <div class="drawer-container" id="cart-drawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">
+        <span>&#128722;</span> Shopping Cart
+      </h3>
+      <button class="drawer-close" onclick="closeDrawers()">&times;</button>
+    </div>
+    
+    <div class="drawer-content" id="cart-drawer-list">
+      <!-- Renders dynamic item list inside cart -->
+    </div>
+    
+    <div class="drawer-footer">
+      <div class="summary-row">
+        <span class="summary-label">Subtotal</span>
+        <span class="summary-value" id="cart-subtotal">₹0</span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">Taxes & Fees</span>
+        <span class="summary-value">₹0.00</span>
+      </div>
+      <hr>
+      <div class="summary-row total-row">
+        <span class="summary-label">Total Price</span>
+        <span class="summary-value total" id="cart-total-price">₹0</span>
+      </div>
+      <button class="btn btn-primary drawer-checkout-btn" id="cart-checkout-btn">Proceed to Purchase</button>
+    </div>
+  </div>
+
+  <!-- Sliding Drawer: Wishlist -->
+  <div class="drawer-container" id="wishlist-drawer">
+    <div class="drawer-header">
+      <h3 class="drawer-title">
+        <span>&#9829;</span> Your Wishlist
+      </h3>
+      <button class="drawer-close" onclick="closeDrawers()">&times;</button>
+    </div>
+    
+    <div class="drawer-content" id="wishlist-drawer-list">
+      <!-- Renders dynamic item list inside wishlist -->
+    </div>
+  </div>
+
+  <!-- MODALS LAYER: Prompt Details Page Modal -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeDetailModal()">&times;</button>
+      <div id="detail-modal-content">
+        <!-- Rendered Dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS LAYER: Simulated Checkout Payment Gateway -->
+  <div class="drawer-overlay" id="payment-overlay"></div>
+  
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-container payment-modal">
+      <button class="modal-close-btn" onclick="closePaymentModal()">&times;</button>
+      
+      <div class="payment-header">
+        <div class="payment-logo brand-text">&#128293; Phoenix Secure Checkout</div>
+        <div class="payment-amount">
+          <span>INR</span> ₹<span id="payment-value-display">0</span>
+        </div>
+      </div>
+      
+      <form class="payment-body" id="payment-form">
+        <div class="form-group">
+          <label for="pay-name">Cardholder Name</label>
+          <input type="text" id="pay-name" class="form-input" placeholder="e.g. Abishek K" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="pay-card">Card Number</label>
+          <input type="text" id="pay-card" class="form-input" placeholder="e.g. 4111 2222 3333 4444" pattern="^[0-9 ]{12,19}$" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pay-expiry">Expiry Date</label>
+            <input type="text" id="pay-expiry" class="form-input" placeholder="MM/YY" pattern="^[0-9]{2}/[0-9]{2}$" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="pay-cvv">CVV</label>
+            <input type="password" id="pay-cvv" class="form-input" placeholder="e.g. 123" pattern="^[0-9]{3,4}$" required>
+          </div>
+        </div>
+        
+        <div class="payment-lock-badge">
+          <span>&#128274;</span> SSL Secured 256-bit encrypted simulated connection
+        </div>
+        
+        <button type="submit" class="btn btn-gold" id="submit-payment-btn">
+          Complete Payment & Unlock
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Script logic link -->
+  <script src="app.js"></script>
+</body>
+</html>
