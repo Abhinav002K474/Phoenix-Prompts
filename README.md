@@ -1,6 +1,9 @@
 # 🔥 Phoenix Prompts
 ### *Premium AI Prompts Marketplace for Creators*
 
+> **🌐 Live Demo:** [https://phoenix-prompts.vercel.app/](https://phoenix-prompts.vercel.app/)  
+> **⚙️ Admin Panel:** [https://phoenix-prompts.vercel.app/admin.html](https://phoenix-prompts.vercel.app/admin.html) *(Password: `admin123`)*
+
 Phoenix Prompts is a modern, high-end, responsive single-page web application designed for creators to discover, wishlist, and unlock state-of-the-art generative AI art prompts (Midjourney, Stable Diffusion, ChatGPT). 
 
 It features a premium dark-luxury aesthetic, interactive micro-animations, copy/selection security gates, and a completely separate admin panel for catalog management.
