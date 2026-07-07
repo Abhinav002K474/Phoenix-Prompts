@@ -354,7 +354,7 @@ function renderPromptsGrid() {
           </div>
           
           <div class="card-tags">
-            ${p.tags.slice(0, 3).map(tag => `<span class="card-tag">${tag}</span>`).join('')}
+            ${(p.tags ?? []).slice(0, 3).map(tag => `<span class="card-tag">${tag}</span>`).join('')}
           </div>
         </div>
         
@@ -374,16 +374,17 @@ function renderPromptsGrid() {
 
 // Compute filters & sorting logic
 function getFilteredPrompts() {
-  let list = state.prompts.filter(p => p.visibility === 'public');
+  // Default visibility to 'public' if field is missing (legacy/admin-uploaded prompts)
+  let list = state.prompts.filter(p => (p.visibility ?? 'public') === 'public');
   
   // 1. Search Query
   if (state.activeFilters.search.trim()) {
     const q = state.activeFilters.search.toLowerCase().trim();
     list = list.filter(p => 
-      p.title.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q) ||
-      p.seoDescription.toLowerCase().includes(q) ||
-      p.tags.some(tag => tag.toLowerCase().includes(q))
+      (p.title ?? '').toLowerCase().includes(q) ||
+      (p.category ?? '').toLowerCase().includes(q) ||
+      (p.seoDescription ?? '').toLowerCase().includes(q) ||
+      (p.tags ?? []).some(tag => tag.toLowerCase().includes(q))
     );
   }
   
@@ -402,7 +403,7 @@ function getFilteredPrompts() {
   // 4. Active tags
   if (state.activeFilters.activeTags.length > 0) {
     list = list.filter(p => 
-      state.activeFilters.activeTags.every(tag => p.tags.includes(tag))
+      state.activeFilters.activeTags.every(tag => (p.tags ?? []).includes(tag))
     );
   }
   
