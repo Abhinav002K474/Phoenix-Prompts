@@ -111,9 +111,9 @@ const el = {
 };
 
 // Initialize Admin Dashboard
-function init() {
+async function init() {
   checkAuth();
-  loadLocalStorage();
+  await loadDatabase();
   setupEventListeners();
   renderAll();
 }
@@ -131,8 +131,22 @@ function checkAuth() {
   }
 }
 
-// Load current state from localStorage
-function loadLocalStorage() {
+// Load catalog data from Firestore (with LocalStorage fallback)
+async function loadDatabase() {
+  if (typeof window.db !== 'undefined') {
+    // Seed defaults to Firestore if DB is empty
+    if (typeof seedDefaultPrompts === 'function') {
+      await seedDefaultPrompts(DEFAULT_PROMPTS);
+    }
+    // Fetch from Firestore
+    if (typeof getAllPrompts === 'function') {
+      prompts = await getAllPrompts();
+      syncBadgeCounters();
+      return;
+    }
+  }
+
+  // Fallback to localStorage if Firebase is not initialized
   const storedPrompts = localStorage.getItem("phoenix_prompts");
   if (storedPrompts) {
     prompts = JSON.parse(storedPrompts);
@@ -140,8 +154,10 @@ function loadLocalStorage() {
     prompts = [...DEFAULT_PROMPTS];
     savePrompts();
   }
-  
-  // Sync Badge Counters
+  syncBadgeCounters();
+}
+
+function syncBadgeCounters() {
   const storedCart = localStorage.getItem("phoenix_cart");
   const cartList = storedCart ? JSON.parse(storedCart) : [];
   if (el.cartCount) el.cartCount.textContent = cartList.length;
@@ -228,7 +244,7 @@ function setupEventListeners() {
   });
   
   // Submit Form
-  el.adminForm?.addEventListener("submit", (e) => {
+  el.adminForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
     
     const idValue = el.formPromptId.value;
@@ -252,55 +268,96 @@ function setupEventListeners() {
       
     let promptObj = {};
     
-    if (idValue) {
-      // EDIT MODE
-      const existingIdx = prompts.findIndex(p => p.id === idValue);
-      if (existingIdx === -1) return;
-      
-      const existing = prompts[existingIdx];
-      
-      promptObj = {
-        ...existing,
-        title,
-        promptText,
-        category,
-        tags,
-        price,
-        visibility,
-        featured,
-        seoDescription,
-        image: uploadedImageBase64 || existing.image
-      };
-      
-      prompts[existingIdx] = promptObj;
-      showToast(`Prompt "${title}" updated successfully!`, "success");
-    } else {
-      // NEW MODE
-      const newId = "prompt_" + Date.now();
-      promptObj = {
-        id: newId,
-        title,
-        promptText,
-        category,
-        tags,
-        price,
-        visibility,
-        featured,
-        seoDescription,
-        image: uploadedImageBase64 || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500", // Fallback gradient
-        author: "Phoenix Admin",
-        created: formatCurrentMonth(),
-        rating: 5,
-        ratingCount: 1
-      };
-      
-      prompts.unshift(promptObj);
-      showToast(`Prompt "${title}" uploaded successfully!`, "success");
+    // Disable submit button during save
+    if (el.formSubmitBtn) {
+      el.formSubmitBtn.disabled = true;
+      el.formSubmitBtn.textContent = "Saving...";
     }
     
-    resetAdminForm();
-    savePrompts();
-    renderAll();
+    try {
+      if (idValue) {
+        // EDIT MODE
+        const existingIdx = prompts.findIndex(p => p.id === idValue);
+        if (existingIdx === -1) {
+          if (el.formSubmitBtn) {
+            el.formSubmitBtn.disabled = false;
+            el.formSubmitBtn.textContent = "Save Changes";
+          }
+          return;
+        }
+        
+        const existing = prompts[existingIdx];
+        let imageUrl = existing.image;
+        
+        // Upload image to Firebase Storage if changed
+        if (uploadedImageBase64 && uploadedImageBase64.startsWith('data:') && typeof uploadImageToStorage === 'function') {
+          imageUrl = await uploadImageToStorage(uploadedImageBase64, idValue);
+        }
+        
+        promptObj = {
+          ...existing,
+          title,
+          promptText,
+          category,
+          tags,
+          price,
+          visibility,
+          featured,
+          seoDescription,
+          image: imageUrl
+        };
+        
+        if (typeof upsertPrompt === 'function') {
+          await upsertPrompt(promptObj);
+        }
+        prompts[existingIdx] = promptObj;
+        showToast(`Prompt "${title}" updated successfully!`, "success");
+      } else {
+        // NEW MODE
+        const newId = "prompt_" + Date.now();
+        let imageUrl = "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500";
+        
+        // Upload image to Firebase Storage if loaded
+        if (uploadedImageBase64 && uploadedImageBase64.startsWith('data:') && typeof uploadImageToStorage === 'function') {
+          imageUrl = await uploadImageToStorage(uploadedImageBase64, newId);
+        }
+        
+        promptObj = {
+          id: newId,
+          title,
+          promptText,
+          category,
+          tags,
+          price,
+          visibility,
+          featured,
+          seoDescription,
+          image: imageUrl,
+          author: "Phoenix Admin",
+          created: formatCurrentMonth(),
+          rating: 5,
+          ratingCount: 1
+        };
+        
+        if (typeof upsertPrompt === 'function') {
+          await upsertPrompt(promptObj);
+        }
+        prompts.unshift(promptObj);
+        showToast(`Prompt "${title}" uploaded successfully!`, "success");
+      }
+      
+      resetAdminForm();
+      savePrompts();
+      renderAll();
+    } catch (err) {
+      console.error(err);
+      showToast("Error saving prompt: " + err.message, "error");
+    } finally {
+      if (el.formSubmitBtn) {
+        el.formSubmitBtn.disabled = false;
+        el.formSubmitBtn.textContent = idValue ? "Save Changes" : "Upload Prompt";
+      }
+    }
   });
   
   // Cancel button resets the editing mode
@@ -365,13 +422,21 @@ window.startEditPrompt = function(id) {
 };
 
 // Delete Prompt
-window.deletePrompt = function(id) {
+window.deletePrompt = async function(id) {
   if (!confirm("Are you sure you want to delete this prompt?")) return;
   
-  prompts = prompts.filter(p => p.id !== id);
-  savePrompts();
-  renderAll();
-  showToast("Prompt deleted from catalog.", "info");
+  try {
+    if (typeof deletePromptFromDB === 'function') {
+      await deletePromptFromDB(id);
+    }
+    prompts = prompts.filter(p => p.id !== id);
+    savePrompts();
+    renderAll();
+    showToast("Prompt deleted from catalog.", "info");
+  } catch (error) {
+    console.error(error);
+    showToast("Error deleting prompt: " + error.message, "error");
+  }
 };
 
 // Reset Form fields

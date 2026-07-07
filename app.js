@@ -117,16 +117,30 @@ const el = {
 
 
 // Initialize Application
-function init() {
-  loadLocalStorage();
+async function init() {
+  await loadDatabase();
+  loadUserState();
   setupEventListeners();
   renderAll();
   showToast("Welcome to Phoenix Prompts!", "success");
 }
 
-// Local Storage Handlers
-function loadLocalStorage() {
-  // Prompts
+// Load catalog data from Firestore (with LocalStorage fallback)
+async function loadDatabase() {
+  // Check if Firebase is initialized
+  if (typeof window.db !== 'undefined') {
+    // Seed defaults to Firestore if DB is empty
+    if (typeof seedDefaultPrompts === 'function') {
+      await seedDefaultPrompts(DEFAULT_PROMPTS);
+    }
+    // Fetch from Firestore
+    if (typeof getAllPrompts === 'function') {
+      state.prompts = await getAllPrompts();
+      return;
+    }
+  }
+
+  // Fallback to localStorage if Firebase is not initialized yet
   const storedPrompts = localStorage.getItem("phoenix_prompts");
   if (storedPrompts) {
     state.prompts = JSON.parse(storedPrompts);
@@ -134,7 +148,10 @@ function loadLocalStorage() {
     state.prompts = [...DEFAULT_PROMPTS];
     savePrompts();
   }
-  
+}
+
+// Local Storage Handlers for User-Specific state
+function loadUserState() {
   // Cart
   const storedCart = localStorage.getItem("phoenix_cart");
   state.cart = storedCart ? JSON.parse(storedCart) : [];
